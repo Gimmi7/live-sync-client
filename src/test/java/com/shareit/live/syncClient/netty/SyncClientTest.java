@@ -15,16 +15,22 @@ class SyncClientTest {
     @Autowired
     private SyncClient syncClient;
 
-    private static final String uri = "wss://imentry-dev.slivee.com:2021/live/bf784e9fa0cb34eaa8140cbcf8373989/K6to/1";
     private static final String local = "ws://localhost:2021/live/bf784e9fa0cb34eaa8140cbcf8373989/K6to/1";
+    private static final String dev = "wss://imentry-dev.slivee.com:2021/live/bf784e9fa0cb34eaa8140cbcf8373989/K6to/1";
+    private static final String test="wss://imentry-test.slivee.com:2021/live/4cbd43168ec536bfbaa35eb365a92c9f/6VbMF/1";
+    private static final String prod="wss://imentry.slivee.com:2021/live/";
 
-    private static final String userId = "K6to";
+    private static final String devUserId = "K6to";
+    private static final String testUserId = "6VbMF";
+    private static final String prodUserId = "K6to";
+
+    private static final String userId = testUserId;
     private static final String roomId = "test_room";
     private static final String streamId = "wangcy_stream";
 
     @BeforeEach
     private void initClient() throws URISyntaxException {
-        syncClient.connect(uri);
+        syncClient.connect(test);
     }
 
     @Test
@@ -32,8 +38,11 @@ class SyncClientTest {
         MsgWrapper enterRoomRsp = syncClient.sendMsg(this.enterRoom());
         System.out.println(enterRoomRsp);
 
-        MsgWrapper sendCommentRsp = syncClient.sendMsg(this.sendComment());
-        System.out.println(sendCommentRsp);
+        for (int i = 0; i < 10; i++) {
+            MsgWrapper sendCommentRsp = syncClient.sendMsg(this.sendComment());
+            System.out.println(sendCommentRsp);
+        }
+
     }
 
     private MsgWrapper sendComment() {

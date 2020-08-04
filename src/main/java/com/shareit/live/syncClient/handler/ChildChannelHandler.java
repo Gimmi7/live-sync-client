@@ -11,6 +11,7 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.netty.handler.stream.ChunkedWriteHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,9 @@ public class ChildChannelHandler extends ChannelInitializer<SocketChannel> {
 
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
+        //设置IdleHandler进行心跳
+        ch.pipeline().addLast(new IdleStateHandler(0, 10, 0, TimeUnit.SECONDS));
+
         if (wss) {
             final SslContext sslCtx = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build();
             ch.pipeline().addLast(sslCtx.newHandler(ch.alloc(), uri.getHost(), uri.getPort()));
@@ -49,11 +53,6 @@ public class ChildChannelHandler extends ChannelInitializer<SocketChannel> {
         ch.pipeline().addLast(wsHandler);
         //自定义二进制消息处理器
         ch.pipeline().addLast(dataChannelHandler);
-
-
-        //中断空闲连接
-        ch.pipeline().addLast(new ReadTimeoutHandler(1, TimeUnit.HOURS));
-        ch.pipeline().addLast(new WriteTimeoutHandler(1, TimeUnit.HOURS));
     }
 
     public void setWsUri(URI uri) {
