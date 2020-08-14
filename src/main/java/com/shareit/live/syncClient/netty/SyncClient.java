@@ -22,6 +22,7 @@ public class SyncClient {
 
     public MsgWrapper syncWrapper;
 
+    public boolean loginSuccess;
 
     public void connect(String url) throws URISyntaxException {
         NettyClient nettyClient = new NettyClient();

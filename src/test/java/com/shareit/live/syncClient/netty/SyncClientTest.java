@@ -44,10 +44,15 @@ class SyncClientTest {
     @SneakyThrows
     @Test
     void clientTest() {
-        MsgWrapper enterRoomRsp = syncClient.sendMsg(this.enterRoom());
-        System.out.println(enterRoomRsp);
+        for (; ; ) {
+            if (syncClient.loginSuccess) {
+                break;
+            }
+        }
+//        MsgWrapper enterRoomRsp = syncClient.sendMsg(this.enterRoom());
+//        System.out.println(enterRoomRsp);
 
-        this.addSteamToOnlineSet();//todo
+//        this.addSteamToOnlineSet();//todo
 
 //        for (int i = 0; i < 10; i++) {
 //            MsgWrapper sendCommentRsp = syncClient.sendMsg(this.sendComment());
@@ -133,5 +138,10 @@ class SyncClientTest {
     private void addSteamToOnlineSet() {
         String member = roomId + "/" + streamId;
         commands.sadd(RedisConstants.ONLINE_STREAM_SET, member);
+    }
+
+    @Test
+    void delLock() {
+        commands.del("LiveRoomFixRateTask");
     }
 }

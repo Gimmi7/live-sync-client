@@ -25,6 +25,14 @@ public class DataChannelHandler extends ChannelHandlerBase {
             synchronized (syncClient) {
                 syncClient.notify();
             }
+        } else if (wrapper.getAction().equals(MsgAction.LOGIN)) {
+            LoginResult loginResult = LoginResult.parseFrom(wrapper.getBody());
+            String out = loginResult.toString() + "\n" +
+                    "lllllllllllllllllllllllllllllll\n";
+            System.out.println(out);
+            if (loginResult.getLoginCode().equals(LoginResult.LoginCode.LOGIN_SUCCESS)) {
+                syncClient.loginSuccess = true;
+            }
         } else if (wrapper.getAction().equals(MsgAction.NOTICE)) {
             this.printNotice(wrapper);
         } else {
