@@ -38,7 +38,7 @@ class SyncClientTest {
 
     @BeforeEach
     private void initClient() throws URISyntaxException {
-        syncClient.connect(dev);
+        syncClient.connect(local);
     }
 
     @SneakyThrows
@@ -47,10 +47,13 @@ class SyncClientTest {
         for (; ; ) {
             if (syncClient.loginSuccess) {
                 break;
+            } else {
+                TimeUnit.MILLISECONDS.sleep(200);
             }
         }
-//        MsgWrapper enterRoomRsp = syncClient.sendMsg(this.enterRoom());
-//        System.out.println(enterRoomRsp);
+        MsgWrapper enterRoomRsp = syncClient.sendMsg(this.enterRoom());
+        System.out.println(enterRoomRsp);
+
 
 //        this.addSteamToOnlineSet();//todo
 
