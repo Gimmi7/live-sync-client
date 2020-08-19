@@ -38,7 +38,7 @@ class SyncClientTest {
 
     @BeforeEach
     private void initClient() throws URISyntaxException {
-        syncClient.connect(local);
+        syncClient.connect(dev);
     }
 
     @SneakyThrows
@@ -51,8 +51,8 @@ class SyncClientTest {
                 TimeUnit.MILLISECONDS.sleep(200);
             }
         }
-        MsgWrapper enterRoomRsp = syncClient.sendMsg(this.enterRoom());
-        System.out.println(enterRoomRsp);
+//        MsgWrapper enterRoomRsp = syncClient.sendMsg(this.enterRoom());
+//        System.out.println(enterRoomRsp);
 
 
 //        this.addSteamToOnlineSet();//todo
@@ -64,6 +64,7 @@ class SyncClientTest {
         TimeUnit.MINUTES.sleep(5);
 
     }
+
 
     private MsgWrapper sendComment() {
         String content = RandomStringUtils.randomAlphabetic(10);
@@ -105,10 +106,12 @@ class SyncClientTest {
     }
 
     private MsgWrapper buildReqWrapper(ApiKey apiKey, ByteString reqBody, int seq) {
-        ReqMsg reqMsg = ReqMsg.newBuilder()
-                .setApiKey(apiKey)
-                .setBody(reqBody)
-                .build();
+        ReqMsg.Builder builder = ReqMsg.newBuilder()
+                .setApiKey(apiKey);
+        if (reqBody != null) {
+            builder.setBody(reqBody);
+        }
+        ReqMsg reqMsg = builder.build();
         MsgWrapper wrapper = MsgWrapper.newBuilder()
                 .setClientVersion(4050603)
                 .setSeq(seq)
